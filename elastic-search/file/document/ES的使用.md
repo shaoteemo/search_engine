@@ -1,4 +1,4 @@
-#How to use ES
+# How to use ES
 
 1.Es需使用小写字母，不能以-、_、+开头。
 
@@ -7,15 +7,15 @@
   当磁盘空间不足15%时，不分配replica shard。当不足5%，不分配任何primary shard。
   
 2.相同的分片不可以在同一个节点上，否则视为多余的，会报集群警告。因此需要计算分片与集群数量的关系。
-##注意下面的语句全部在Kibana的DevTools中进行。使用RESTFulApi
+## 注意下面的语句全部在Kibana的DevTools中进行。使用RESTFulApi
 
-####创建一个索引(有就修改，没有就添加)
+#### 创建一个索引(有就修改，没有就添加)
 `PUT [索引名称]`
 
-####查看分片信息
+#### 查看分片信息
 `GET _cat/shards`
 
-####修改主分片创建数及副分片创建数
+#### 修改主分片创建数及副分片创建数
 `PUT [索引名称]
 {
   "settings": {
@@ -24,41 +24,41 @@
   }
 }`
 
-####修改索引
+#### 修改索引
   注意:只能修改副本分片数量
 `PUT [索引名称]/_settings
 {
   "number_of_replicas": 1
 }`
 
-####删除索引
+#### 删除索引
 `DELETE [索引名称],[索引名称]`
 
 > 注：_cat查看各种信息参数
 
-####查看服务器状态
+#### 查看服务器状态
 `GET _cat/health?v`参数v代表显示变量名
-####状态中的green表示一切正常。yellow表示有副本分片未激活。red表示错误，主分片异常。
+#### 状态中的green表示一切正常。yellow表示有副本分片未激活。red表示错误，主分片异常。
 `测试yellow情况发生测试
 PUT default_index/_settings
 {
   "number_of_replicas": 2
 }`
 
-####查询索引
+#### 查询索引
 `GET _cat/indices?v`
 
-####查询分片信息
+#### 查询分片信息
 `GET _cat/shards?v`
 
-####查询节点信息
+#### 查询节点信息
 `GET _cat/nodes?v`
 
 
-##文档操作
+## 文档操作
 > 当前版本创建文档不需要指定类型(>6.x <7.x需要一个类型)
 
-####新增文档(7.x)
+#### 新增文档(7.x)
   注：其他版本详见文档
   
   该版本类型type类型有且仅有一个类型：_doc
@@ -95,7 +95,7 @@ PUT default_index/_settings
   注：ID不指配时ES会创建GUID(UUID算法强化。用于分布式不出现重复的id(当前索引)。)。如果使用相同主键则更新(3点除外)
   POST可以不用传递id自动生成。
   
-####查询文档(7.x)
+#### 查询文档(7.x)
 
 元数据以：_XXX命名
 
@@ -119,7 +119,7 @@ PUT default_index/_settings
       ]
     }
 
-####修改文档(7.x)
+#### 修改文档(7.x)
 
 注：ES更新文档过程。标记修改删除文档>版本号在原有基础上+1。该操作会提升效率。然而标记删除并不会立即删除，
 版本号(_version)更新从0开始的时候，ES会在空闲的时候然后从磁盘删除。ES是多线程即使有较慢的操作也可以忽略不计。
@@ -151,13 +151,13 @@ PUT default_index/_settings
       }
     }
     
-####删除文档数据(7.x)
+#### 删除文档数据(7.x)
 
 注：删除文档也是打标记，空闲时才物理删除。
 
     DELETE [索引名称]/[类型]/[ID]
     
-#####批量操作(增、删、改)*
+##### 批量操作(增、删、改)*
 注：格式要求，一个请求必须是一行，以提升效率(服务器不用拼接字符串)。底层使用字符流读取，一次读取一行。
 
 不会因为一个请求执行错误导致下面的语句执行失败。
@@ -182,16 +182,16 @@ PUT default_index/_settings
     
 注意事项：批量操作_bulk请求体有性能瓶颈，受CPU（高速缓存）、内存、网络影响。推荐大小5-15MB。
 
-####分词器及标准化处理(7.x)
+#### 分词器及标准化处理(7.x)
 
-#####常用分词器全为印欧语系类分词器
+##### 常用分词器全为印欧语系类分词器
 <u>standard</u> analyzer：默认的分词器，当text为文本时，使用默认的分词器。保留部分的符号。保留数字。
 
 <u>simple</u> analyzer：符号数字全部删除，可能破坏寓意
 
 <u>whitespace</u> analyzer：空白符分割，可能会破坏语义
 
-######语言分词器(language analyzer)
+###### 语言分词器(language analyzer)
 <u>english</u> analyzer：忽略介词等，忽略复数等词性等
 
 <u>chinese</u> analyzer：内置中文分词器，一字一词。
@@ -202,8 +202,8 @@ PUT default_index/_settings
       , "analyzer": "chinese[分词器]"
     }
     
-#####中文分词器使用
-######安装
+##### 中文分词器使用
+###### 安装
 1.需要下载后
 
 [Github地址](https://github.com/medcl/elasticsearch-analysis-ik)
@@ -217,7 +217,7 @@ PUT default_index/_settings
 
 5.打包后把.zip包解压放到es根目录/plugins/目录下。安装完成，重启服务器即可。
 
-######IK分词器使用及介绍
+###### IK分词器使用及介绍
 <u>ik_smart</u> analyzer：简短分词。
 
 <u>ik_max_word</u> analyzer：分词更细。
@@ -228,7 +228,7 @@ PUT default_index/_settings
       , "analyzer": "ik_max_word"
     }
 
-######IK分词器配置介绍
+###### IK分词器配置介绍
 
 配置文件：IKAnalyzer.cfg.xml中可以配置自定义的词典。配置时只放入文件名。
 
